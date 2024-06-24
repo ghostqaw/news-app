@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Жаңалық құру</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+    .form-container {
+        background-color: white;
+        padding: 5px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 500px;
+        box-sizing: border-box;
+        margin: auto;
+        margin-top: 5px;
+    }
+
+    .form-container h2 {
+        text-align: center;
+        margin-bottom: 5px;
+        color: #333;
+    }
+
+    .form-container form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-container form label {
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #555;
+    }
+
+    .form-container form input,
+    .form-container form select,
+    .form-container form textarea,
+    .form-container form button {
+        padding: 10px;
+        margin-bottom: 5px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        font-size: 16px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .form-container form input[type="file"] {
+        padding: 5px;
+    }
+
+    .form-container form button {
+        background-color: #0078d4;  
+        color: white; 
+        border: none; 
+        padding: 8px 16px; 
+        border-radius: 5px; 
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .form-container form button:hover {
+        background-color: #0056b3;
+    }
+
+    /* Modal styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.6);
+        padding-top: 60px;
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 5% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 400px;
+        border-radius: 8px;
+        text-align: center;
+    }
+
+    .modal-content p {
+        margin: 20px 0;
+    }
+
+    .modal-content button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .modal-content button:hover {
+        background-color: #0056b3;
+    }
+
+    /* Animation */
+    .modal.fade-in {
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Жаңалық құру</h2>
+        <form method="POST" enctype="multipart/form-data" id="news-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Құру</button>
+        </form>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content fade-in">
+            <p>Жаңалық сәтті құрылды!</p>
+            <button id="closeModalButton">Жабу</button>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('news-form');
+        const successModal = document.getElementById('successModal');
+        const closeModalButton = document.getElementById('closeModalButton');
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    successModal.style.display = 'block';
+                    closeModalButton.addEventListener('click', function() {
+                        successModal.style.display = 'none';
+                        window.location.href = "{% url 'home' %}";
+                    });
+                    setTimeout(function() {
+                        successModal.style.display = 'none';
+                        window.location.href = "{% url 'home' %}";
+                    }, 3000); // Auto-close and redirect after 3 seconds
+                } else {
+                    // Handle the error response
+                    response.text().then(text => {
+                        alert('Error: ' + text);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    });
+    </script>
+</body>
+</html>
+
+
+
+
+

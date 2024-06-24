@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .profile-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+
+        .profile-pic {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background-color: #007bff;
+            color: white;
+            font-size: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+            overflow: hidden;
+        }
+
+        .profile-pic img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        h2 {
+            margin: 0 0 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        form input,
+        form button {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+
+        form button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: #0056b3;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+        }
+
+        .file-input-wrapper .btn {
+            display: inline-block;
+            padding: 10px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group .file-input-wrapper {
+            width: 100%;
+        }
+
+        .form-group .file-input-wrapper .btn {
+            width: 100%;
+            text-align: center;
+        }
+
+        .form-group .file-input-wrapper input[type="file"] {
+            width: 100%;
+            height: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <div class="profile-pic">
+            {% if user.userprofile.photo %}
+                <img src="{{ user.userprofile.photo.url }}" alt="Profile Picture">
+            {% else %}
+                {{ user.first_name|slice:":1" }}
+            {% endif %}
+        </div>
+        <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="phone_number">Телефон нөмірі:</label>
+                {{ form.phone_number }}
+            </div>
+            <div class="form-group">
+                <label for="id_email">Электрондық пошта:</label>
+        <input type="email" id="id_email" name="email" value="{{ user.email }}" required>
+            </div>
+            <div class="form-group">
+                <label for="photo">Фото:</label>
+                <div class="file-input-wrapper">
+                    <span class="btn">Файл таңдаңыз</span>
+                    {{ form.photo }}
+                </div>
+            </div>
+            <button type="submit">Сақтау</button>
+        </form>
+    <a href="{% url 'home' %}">Артқа</a>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var fileInputLabel = document.querySelector(".file-input-wrapper + p");
+            if (fileInputLabel) {
+                fileInputLabel.style.display = 'none';
+            }
+
+            var clearCheckboxLabel = document.querySelector(".file-input-wrapper + p + span");
+            if (clearCheckboxLabel) {
+                clearCheckboxLabel.style.display = 'none';
+            }
+
+            var clearCheckbox = document.querySelector(".file-input-wrapper + p + span + input[type='checkbox']");
+            if (clearCheckbox) {
+                clearCheckbox.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
+
+

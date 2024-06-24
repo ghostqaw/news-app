@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Менің жаңалықтарым</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        td img {
+            max-width: 100px;
+        }
+        .footer-container {
+            background-color: #0056b3;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: sticky;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+       <header>
+        <div class="header-container">
+            <div class="logo">Жаңалықтар</div>
+            <nav>
+                <ul>
+                    <li><a href="{% url 'news_list' %}" id="home-link" class="active">Басты</a></li>
+                    {% for category in categories %}
+                    <li><a href="{% url 'category_news' category.id %}" id="{{ category.name }}-link">{{ category.name }}</a></li>
+                    {% endfor %}
+                    <li><a href="{% url 'create_news' %}" style="text-decoration: underline;" id="create-news">Жаңалықтар құру</a></li>
+                    <li><a href="{% url 'my_news' %}" style="text-decoration: underline;" id="my-news">Менің жаңалықтарым</a></li>
+                </ul>
+            </nav>
+            <div class="profile-bar">
+                {% if user.is_authenticated %}
+                    <div class="profile-dropdown">
+                        <span>{{ user.email }}</span>
+                        <div class="profile-dropdown-content">
+                            <a href="{% url 'profile' %}" id="profile-link">Жеке кабинет</a>
+                            <a href="{% url 'logout' %}" id="logout-link">Шығу</a>
+                        </div>
+                    </div>
+                {% else %}
+                    <a href="{% url 'login' %}" id="login-link">Кіру</a>
+                    <a href="{% url 'register' %}" id="register-link">Тіркелу</a>
+                {% endif %}
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="Іздеу...">
+                    <button id="search-button">Іздеу</button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main>
+        <div class="content">
+            <h2>Менің жаңалықтарым</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Тақырып</th>
+                        <th>Сипаттама</th>
+                        <th>Сурет</th>
+                        <th>Дата</th>
+                        <th>Іс-әрекеттер</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for news in user_news %}
+                    <tr>
+                        <td>{{ news.title }}</td>
+                        <td>{{ news.description }}</td>
+                        <td><img src="{{ news.image.url }}" alt="{{ news.title }}"></td>
+                        <td>{{ news.created_at|date:"d M Y H:i" }}</td>
+                        <td>
+                            <a href="{% url 'edit_news' news.id %}">Өңдеу</a> | 
+                            <a href="{% url 'delete_news' news.id %}">Жою</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+    <footer class="footer-container">
+        <div class="footer-content">
+            <p>© 2024 Жаңалықтар</p>
+            <p>Барлық құқықтар қорғалған</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Жаңалықтар{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+           body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #0056b3;
+            color: white;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        nav ul li {
+            margin: 0 10px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+        nav ul li a.active {
+            text-decoration: underline;
+        }
+        .profile-bar {
+            display: flex;
+            align-items: center;
+        }
+        .profile-bar a {
+            color: white;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+        .search-bar {
+            display: flex;
+            align-items: center;
+        }
+        .search-bar input {
+            padding: 5px;
+            margin-right: 5px;
+            border: none;
+            border-radius: 4px;
+        }
+        .search-bar button {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: white;
+            color: #0056b3;
+            cursor: pointer;
+        }
+        main {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .footer-container {
+            background-color: #0056b3;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: sticky;
+            bottom: 0;
+            width: 100%;
+        }
+        .profile-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .profile-dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            min-width: 160px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+        .profile-dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .profile-dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+        .profile-dropdown:hover .profile-dropdown-content {
+            display: block;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 8px;
+        }
+        .modal-content p {
+            text-align: center;
+        }
+        .modal-content button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto 0;
+        }
+        .modal-content button:hover {
+            background-color: #0056b3;
+        }
+        .news-tips-slider {
+            position: relative;
+            width: 100%;
+            height: auto;
+            overflow: hidden;
+        }
+         .slide-container {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+        .slide {
+    position: relative;
+    width: 100%;
+    height: 370px;
+    background-size: cover;
+    background-position: 0 30%; /* Смещаем изображение немного вниз */
+}
+
+
+        .slide-content {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 8px;
+        }
+        @keyframes slideInLeft {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        .slide-container:nth-child(odd) .slide {
+            animation: slideInLeft 1s forwards;
+        }
+        .slide-container:nth-child(even) .slide {
+            animation: slideInRight 1s forwards;
+        }
+        .visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">Жаңалықтар</div>
+            <nav>
+                <ul>
+                    <li><a href="{% url 'news_list' %}" id="home-link" class="active">Басты</a></li>
+                    {% for category in categories %}
+                    <li><a href="{% url 'category_news' category.id %}" id="{{ category.name }}-link">{{ category.name }}</a></li>
+                    {% endfor %}
+                    <li><a href="{% url 'create_news' %}" style="text-decoration: underline;" id="create-news">Жаңалықтар құру</a></li>
+                    <li><a href="{% url 'my_news' %}" style="text-decoration: underline;" id="my-news">Менің жаңалықтарым</a></li>
+                </ul>
+            </nav>
+            <div class="profile-bar">
+                {% if user.is_authenticated %}
+                    <div class="profile-dropdown">
+                        <span>{{ user.email }}</span>
+                        <div class="profile-dropdown-content">
+                            <a href="{% url 'profile' %}" id="profile-link">Жеке кабинет</a>
+                            <a href="{% url 'logout' %}" id="logout-link">Шығу</a>
+                        </div>
+                    </div>
+                {% else %}
+                    <a href="{% url 'login' %}" id="login-link">Кіру</a>
+                    <a href="{% url 'register' %}" id="register-link">Тіркелу</a>
+                {% endif %}
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="Іздеу...">
+                    <button id="search-button">Іздеу</button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main>
+        {% block content %}
+           <div class="news-tips-slider" style="cursor: pointer;">
+    {% for slide in slides %}
+    <div class="slide-container">
+        <div class="slide" style="background-image: url('{{ slide.image.url }}');" onclick="window.open('{{ slide.source }}', '_blank');">
+            <div class="slide-content">
+                <h2 style="color: #07f1ae">{{ slide.title }}</h2>
+                <p>{{ slide.description }}</p>
+                {% if slide.source %}
+                <a href="{{ slide.source }}" target="_blank" style="color: #07f1ae; text-decoration: underline;">Дереккөз</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+        {% endblock %}
+    </main>
+    <footer class="footer-container">
+        <div class="footer-content">
+            <p>© 2024 Жаңалықтар</p>
+            <p>Барлық құқықтар қорғалған</p>
+        </div>
+    </footer>
+
+    <!-- Logout Modal -->
+    <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <p>Сіз сәтті шықтыңыз!</p>
+            <button id="closeLogoutModal">Жабу</button>
+        </div>
+    </div>
+
+    <script src="{% static 'scripts/script.js' %}"></script>
+ <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const slideContainers = document.querySelectorAll('.slide-container'); // Обращаемся к контейнерам
+
+        function checkVisibility() {
+            const triggerBottom = window.innerHeight / 5 * 4;
+
+            slideContainers.forEach(container => {
+                const slideTop = container.getBoundingClientRect().top;
+                if (slideTop < triggerBottom) {
+                    container.classList.add('visible');
+                } else {
+                    container.classList.remove('visible');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', checkVisibility);
+        checkVisibility(); // Проверка при загрузке страницы
+    });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+

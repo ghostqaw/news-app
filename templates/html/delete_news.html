@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="kk">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Жаңалықты жою</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        .form-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            box-sizing: border-box;
+            margin: auto;
+            text-align: center;
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-container form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-container form button {
+            background-color: #0078d4;  
+            color: white; 
+            border: none; 
+            padding: 8px 16px; 
+            border-radius: 5px; 
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .form-container form button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Жаңалықты жою</h2>
+        <p>Сіз <strong>{{ news.title }}</strong> жаңалықты жоюға сенімдісіз бе?</p>
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit">Иә, жою</button>
+        </form>
+        <a href="{% url 'my_news' %}">Артқа</a>
+    </div>
+</body>
+</html>
